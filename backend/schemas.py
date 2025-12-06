@@ -11,11 +11,11 @@ from datetime import datetime, date
 class UserConfigBase(BaseModel):
     age: int = Field(..., examples=[18])
     sex: str = Field(..., examples=["male"])
-    height_cm: float = Field(..., examples=[172.0])
-    weight_kg: float = Field(..., examples=[60.0])
+    height: float = Field(..., examples=[172.0])
+    weight: float = Field(..., examples=[60.0])
     goal: str = Field(..., examples=["lose", "maintain", "gain"])
-    activity_level: str | None = Field(default="moderate", examples=["low", "moderate", "high"])
-    experience_level: str | None = Field(default="beginner", examples=["beginner", "intermediate", "advanced"])
+    activity: str | None = Field(default="moderate", examples=["low", "moderate", "high"])
+    experience: str | None = Field(default="beginner", examples=["beginner", "intermediate", "advanced"])
 
 
 class UserConfigCreate(UserConfigBase):

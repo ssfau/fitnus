@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from sqlalchemy import Column, Integer, Float, String, Boolean
 from sqlalchemy.orm import Session, Mapped, mapped_column
-from db import Base
-import schemas
+from backend.db import Base
+import backend.schemas as schemas
 
 router = APIRouter()
 
