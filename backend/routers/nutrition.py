@@ -2,6 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Header, UploadFile, File,
 from typing import Optional
 from sqlalchemy.orm import Session
 from datetime import datetime
+import base64
+import os
+import json
+from anthropic import Anthropic
 
 from backend.db import get_db
 import backend.schemas as schemas
@@ -106,58 +110,131 @@ def create_nutrition_entry(
 @router.post("/upload")
 async def upload_nutrition_image(
     file: UploadFile = File(...),
-    date: Optional[str] = Form(None),
-    save: Optional[bool] = Form(False),
-    user_id: str = Depends(get_user_id),
+    user_id: str = Form(...),
+    date: str = Form(None),
+    save: bool = Form(False),
     db: Session = Depends(get_db)
 ):
     """
-    POST /api/v1/nutrition/upload
-    Upload image (multipart/form-data), backend forwards to Claude/Nutrition API 
-    and returns estimated calories/protein/carbs/fats and saves log if requested
+    Upload a food image → send to Claude → get nutrition estimates → save meal if requested.
     """
-    # Use current date if not provided
+
+    # 1️⃣ Validate date
     if not date:
         date = datetime.now().strftime("%Y-%m-%d")
-    
-    # Validate date format
+
     try:
         datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
-        raise HTTPException(status_code=400, detail="Date must be in YYYY-MM-DD format")
-    
-    # Read file content
+        raise HTTPException(status_code=400, detail="Date must be YYYY-MM-DD")
+
+    # 2️⃣ Read file
     contents = await file.read()
-    
-    # TODO: Forward to Claude/Nutrition API for analysis
-    # For now, return placeholder estimate
-    estimated_nutrition = {
-        "calories": 500.0,
-        "protein": 25.0,
-        "carbs": 60.0,
-        "fats": 18.0,
-        "description": f"Estimated from {file.filename}"
+    if not contents:
+        raise HTTPException(status_code=400, detail="Image file is empty")
+
+    # Convert image to base64
+    image_base64 = base64.b64encode(contents).decode("utf-8")
+
+    # Determine MIME type from uploaded file
+    mime_type = file.content_type
+
+    # 3️⃣ Initialize Claude client
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not set")
+
+    client = Anthropic(api_key=api_key)
+
+    # 4️⃣ Prompt
+    prompt = """
+You are a nutrition estimation model. Analyze the provided food image and return ONLY a JSON object
+with this structure:
+
+{
+  "calories": <number>,
+  "protein": <grams>,
+  "carbs": <grams>,
+  "fats": <grams>,
+  "description": "<short description of the meal>"
+}
+
+Make your best nutritional estimate. No extra commentary.
+"""
+
+    # 5️⃣ Claude API call
+    try:
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=800,
+            messages=[
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "image",             # ✅ correct type
+                "source": {
+                    "type": "base64",
+                    "data": image_base64,
+                    "media_type": mime_type  # e.g., "image/jpeg"
+                }
+            },
+            {"type": "text", "text": prompt}
+        ]
     }
-    
-    # If save is requested, create meal entry
+    ]
+        )
+
+        response_text = message.content[0].text
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Claude API error: {str(e)}")
+
+    # 6️⃣ Extract JSON from Claude response
+    try:
+        json_start = response_text.find("{")
+        json_end = response_text.rfind("}") + 1
+
+        if json_start == -1 or json_end == -1:
+            raise ValueError("Claude returned no JSON")
+
+        nutrition_data = json.loads(response_text[json_start:json_end])
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to parse JSON from Claude response: {response_text}"
+        )
+
+    # 7️⃣ Validate + structure response
+    estimated = {
+        "calories": float(nutrition_data.get("calories", 0)),
+        "protein": float(nutrition_data.get("protein", 0)),
+        "carbs": float(nutrition_data.get("carbs", 0)),
+        "fats": float(nutrition_data.get("fats", 0)),
+        "description": nutrition_data.get("description", "Unknown meal"),
+    }
+
+    # 8️⃣ Optional: save to DB
     if save:
         meal_data = schemas.MealCreate(
             user_id=user_id,
             date=date,
-            calories=estimated_nutrition["calories"],
-            protein=estimated_nutrition["protein"],
-            carbs=estimated_nutrition["carbs"],
-            fat=estimated_nutrition["fats"],
-            description=estimated_nutrition["description"],
-            img_url=None  # Could store S3 URL or path here
+            calories=estimated["calories"],
+            protein=estimated["protein"],
+            carbs=estimated["carbs"],
+            fat=estimated["fats"],
+            description=estimated["description"],
+            img_url=None
         )
+
         meal = create_manual_meal_entry(db, meal_data)
-        estimated_nutrition["meal_id"] = meal.id
-        estimated_nutrition["saved"] = True
+        estimated["meal_id"] = meal.id
+        estimated["saved"] = True
     else:
-        estimated_nutrition["saved"] = False
-    
-    return estimated_nutrition
+        estimated["saved"] = False
+
+    return estimated
 
 
 @router.get("/projection")
