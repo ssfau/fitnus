@@ -1,8 +1,9 @@
 # db.py
-from sqlalchemy import create_engine, Column, Integer, Float, String, Date, ForeignKey, JSON, Boolean
+from sqlalchemy import create_engine, Column, Integer, Float, String, Date, ForeignKey, JSON, Boolean, Date
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship, Mapped, mapped_column
 from typing import List, Dict
 from datetime import date
+
 
 DATABASE_URL = "sqlite:///./app.db"
 
@@ -46,11 +47,11 @@ class WorkoutPlan(Base):
 
 class WorkoutHistory(Base):
     __tablename__ = "workout_history"
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[str] = mapped_column(String, index=True)
-    date: Mapped[date] = mapped_column(Date, index=True)
-    completed_exercises: Mapped[list] = mapped_column(JSON)  # List of exercises with weight/reps
+    workout_date: Mapped[date] = mapped_column(Date, index=True)
+    completed_exercises: Mapped[list] = mapped_column(JSON)
     created_at: Mapped[date] = mapped_column(Date, default=date.today)
 
 
