@@ -30,11 +30,6 @@ class MealEntry(Base):
     carbs: Mapped[float] = mapped_column(default=0)
     fats: Mapped[float] = mapped_column(default=0)
 
-"""
-def request_daily_nutrition(db: Session, data: schemas.DailyNutritionBase):
-    nutritiontoday = DailyNutritionLog(**data.dict())
-    db.query()
-"""
 
 def create_manual_meal_entry(db: Session, data: schemas.MealCreate):
     # Convert date string to date object

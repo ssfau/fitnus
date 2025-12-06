@@ -1,36 +1,51 @@
+from fastapi import APIRouter
 from sqlalchemy import Column, Integer, Float, String, Boolean
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Mapped, mapped_column
 from db import Base
 import schemas
+
+router = APIRouter()
 
 class UserSettings(Base):
     __tablename__ = "user_settings"
 
-    user_id = Column(Integer, primary_key=True) 
-    height = Column(Float)     # cm
-    weight = Column(Float)     # kg
-    age = Column(Integer)
-    sex = Column(String)       # "male" / "female"
-    goal = Column(String)      # "lose" / "gain" / "maintain"
-    activity = Column(String)
-    experience = Column(String)
+    user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    height: Mapped[float] = mapped_column(Float)     # cm
+    weight: Mapped[float] = mapped_column(Float)     # kg
+    age: Mapped[int] = mapped_column(Integer)
+    sex: Mapped[str] = mapped_column(String)         # "male" / "female"
+    goal: Mapped[str] = mapped_column(String)        # "lose" / "gain" / "maintain"
+    activity: Mapped[str] = mapped_column(String)
+    experience: Mapped[str] = mapped_column(String)
 
-def save_settings(db: Session, data: schemas.UserSettingsCreate):
-    existing = db.query(schemas.UserSettingsBase).filter_by(user_id=data.user_id).first()
+def get_settings(db: Session, data: schemas.UserConfigCreate):
+    user = db.query(UserSettings).filter_by(user_id=data.user_id).first()
+    if user:
+        return user
+    return _create_user(db, data)
 
-    if existing:
+
+def save_settings(db: Session, data: schemas.UserConfigCreate):
+    user = db.query(UserSettings).filter_by(user_id=data.user_id).first()
+
+    if user:
         # update
         for key, value in data.dict().items():
-            setattr(existing, key, value)
+            setattr(user, key, value)
         db.commit()
-        return existing
+        return user
 
-    # create
-    new_user = schemas.UserSettingsBase(**data.dict())
+    return _create_user(db, data)
+
+
+# helper function for creating a new user
+def _create_user(db: Session, data: schemas.UserConfigCreate):
+    new_user = UserSettings(**data.dict())
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
 
 
 
