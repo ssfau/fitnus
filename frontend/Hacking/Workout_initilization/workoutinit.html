@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitnus - Workout Setup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Page fade-in */
+        body {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            --border-color: #2a2a2a;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .init-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 700px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .init-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .init-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .init-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .form-label .required {
+            color: var(--accent-purple);
+        }
+
+        .training-style-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .style-option {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .style-option:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+
+        .style-option.selected {
+            border-color: var(--accent-purple);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .style-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .style-option {
+            position: relative;
+        }
+
+        .style-option-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .style-option-name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .slider-container {
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .slider-value {
+            position: absolute;
+            right: 0;
+            top: -24px;
+            color: var(--accent-purple);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .workout-preview {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .workout-preview.active {
+            display: block;
+        }
+
+        .workout-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .workout-preview-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+        }
+
+        .workout-preview-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .workout-day {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .workout-day-header {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .workout-exercises {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .workout-exercises li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding: 0.25rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workout-exercises li i {
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--accent-purple);
+        }
+
+        @media (max-width: 768px) {
+            .training-style-options {
+                grid-template-columns: 1fr;
+            }
+
+            .init-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="init-container">
+        <div class="init-header">
+            <h1>Create Your Workout Plan</h1>
+            <p>Let's personalize your fitness journey</p>
+        </div>
+
+        <form id="workoutInitForm">
+            <!-- Training Style -->
+            <div class="form-section">
+                <label class="form-label">
+                    Preferred Training Style <span class="required">*</span>
+                </label>
+                <div class="training-style-options">
+                    <div class="style-option" data-style="home">
+                        <div class="style-option-icon">🏠</div>
+                        <div class="style-option-name">Home Workout</div>
+                    </div>
+                    <div class="style-option" data-style="gym">
+                        <div class="style-option-icon">🏋️</div>
+                        <div class="style-option-name">Gym</div>
+                    </div>
+                    <div class="style-option" data-style="calisthenics">
+                        <div class="style-option-icon">🤸</div>
+                        <div class="style-option-name">Calisthenics</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Days per Week -->
+            <div class="form-section">
+                <label class="form-label">
+                    Days Available per Week <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                    <div class="slider-container">
+                        <input type="range" min="1" max="7" value="4" class="slider" id="daysPerWeek">
+                        <span class="slider-value" id="daysPerWeekValue">4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hours per Day -->
+            <div class="form-section">
+                <label class="form-label">
+                    Hours Available per Day <span class="required">*</span>
+                </label>
+                <div class="input-group">
+                    <div class="slider-container">
+                        <input type="range" min="0.5" max="3" step="0.5" value="1.5" class="slider" id="hoursPerDay">
+                        <span class="slider-value" id="hoursPerDayValue">1.5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workout Preview -->
+            <div class="workout-preview" id="workoutPreview">
+                <div class="workout-preview-header">
+                    <div>
+                        <div class="workout-preview-title">Your Personalized Workout Plan</div>
+                        <div class="workout-preview-subtitle">Generated by Claude AI</div>
+                    </div>
+                </div>
+                <div id="workoutPlanContent">
+                    <!-- Workout plan will be generated here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="btn btn-secondary" id="skipBtn">
+                    <i class="fas fa-arrow-left"></i>
+                    Skip for Now
+                </button>
+                <button type="submit" class="btn btn-primary" id="generateBtn" disabled>
+                    <i class="fas fa-magic"></i>
+                    Generate Workout Plan
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let selectedStyles = [];
+        let daysPerWeek = 4;
+        let hoursPerDay = 1.5;
+
+        // Training style selection (multiple allowed)
+        document.querySelectorAll('.style-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const style = option.dataset.style;
+                
+                if (option.classList.contains('selected')) {
+                    // Deselect
+                    option.classList.remove('selected');
+                    selectedStyles = selectedStyles.filter(s => s !== style);
+                } else {
+                    // Select
+                    option.classList.add('selected');
+                    selectedStyles.push(style);
+                }
+                
+                checkFormValidity();
+            });
+        });
+
+        // Days per week slider
+        const daysSlider = document.getElementById('daysPerWeek');
+        const daysValue = document.getElementById('daysPerWeekValue');
+        daysSlider.addEventListener('input', () => {
+            daysPerWeek = parseInt(daysSlider.value);
+            daysValue.textContent = daysPerWeek;
+            checkFormValidity();
+        });
+
+        // Hours per day slider
+        const hoursSlider = document.getElementById('hoursPerDay');
+        const hoursValue = document.getElementById('hoursPerDayValue');
+        hoursSlider.addEventListener('input', () => {
+            hoursPerDay = parseFloat(hoursSlider.value);
+            hoursValue.textContent = hoursPerDay;
+            checkFormValidity();
+        });
+
+        function checkFormValidity() {
+            const generateBtn = document.getElementById('generateBtn');
+            if (selectedStyles.length > 0 && daysPerWeek && hoursPerDay) {
+                generateBtn.disabled = false;
+            } else {
+                generateBtn.disabled = true;
+            }
+        }
+
+        // Generate workout plan
+        function generateWorkoutPlan() {
+            const workoutPlanContent = document.getElementById('workoutPlanContent');
+            workoutPlanContent.innerHTML = '';
+
+            // Workout templates based on training style
+            const workoutTemplates = {
+                home: {
+                    exercises: [
+                        { name: 'Push-ups', sets: 3, reps: 12 },
+                        { name: 'Squats', sets: 3, reps: 15 },
+                        { name: 'Planks', sets: 3, reps: '60s' },
+                        { name: 'Lunges', sets: 3, reps: 12 },
+                        { name: 'Burpees', sets: 3, reps: 10 },
+                        { name: 'Mountain Climbers', sets: 3, reps: 20 }
+                    ]
+                },
+                gym: {
+                    exercises: [
+                        { name: 'Bench Press', sets: 4, reps: 8 },
+                        { name: 'Squats', sets: 4, reps: 10 },
+                        { name: 'Deadlifts', sets: 3, reps: 6 },
+                        { name: 'Pull-ups', sets: 3, reps: 8 },
+                        { name: 'Overhead Press', sets: 3, reps: 10 },
+                        { name: 'Barbell Rows', sets: 3, reps: 10 }
+                    ]
+                },
+                calisthenics: {
+                    exercises: [
+                        { name: 'Pull-ups', sets: 4, reps: 8 },
+                        { name: 'Dips', sets: 3, reps: 12 },
+                        { name: 'Pistol Squats', sets: 3, reps: 8 },
+                        { name: 'Handstand Push-ups', sets: 3, reps: 5 },
+                        { name: 'Muscle-ups', sets: 3, reps: 5 },
+                        { name: 'L-sit Hold', sets: 3, reps: '30s' }
+                    ]
+                }
+            };
+
+            // Combine exercises from all selected styles
+            let allExercises = [];
+            selectedStyles.forEach(style => {
+                if (workoutTemplates[style]) {
+                    allExercises = allExercises.concat(workoutTemplates[style].exercises);
+                }
+            });
+
+            // Remove duplicates based on exercise name
+            const uniqueExercises = [];
+            const seenNames = new Set();
+            allExercises.forEach(exercise => {
+                if (!seenNames.has(exercise.name)) {
+                    seenNames.add(exercise.name);
+                    uniqueExercises.push(exercise);
+                }
+            });
+
+            const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            let exerciseIndex = 0;
+
+            for (let day = 0; day < daysPerWeek; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'workout-day';
+                
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'workout-day-header';
+                dayHeader.textContent = dayNames[day];
+                dayElement.appendChild(dayHeader);
+
+                const exercisesList = document.createElement('ul');
+                exercisesList.className = 'workout-exercises';
+
+                // Distribute exercises across days
+                const exercisesForDay = Math.ceil(uniqueExercises.length / daysPerWeek);
+                for (let i = 0; i < exercisesForDay && exerciseIndex < uniqueExercises.length; i++) {
+                    const exercise = uniqueExercises[exerciseIndex];
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <i class="fas fa-dumbbell"></i>
+                        <span>${exercise.name} - ${exercise.sets} sets x ${exercise.reps} reps</span>
+                    `;
+                    exercisesList.appendChild(li);
+                    exerciseIndex++;
+                }
+
+                dayElement.appendChild(exercisesList);
+                workoutPlanContent.appendChild(dayElement);
+            }
+
+            // Show preview
+            document.getElementById('workoutPreview').classList.add('active');
+        }
+
+        // Form submission
+        document.getElementById('workoutInitForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (selectedStyles.length === 0) {
+                alert('Please select at least one training style');
+                return;
+            }
+
+            generateWorkoutPlan();
+
+            // Update generate button
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.innerHTML = '<i class="fas fa-check"></i> Continue to Workout';
+            generateBtn.onclick = () => {
+                // Save workout plan to localStorage and mark initialized
+                const workoutPlan = {
+                    styles: selectedStyles,
+                    daysPerWeek: daysPerWeek,
+                    hoursPerDay: hoursPerDay,
+                    generatedAt: new Date().toISOString()
+                };
+                localStorage.setItem('workoutPlan', JSON.stringify(workoutPlan));
+                markWorkoutInitialized(workoutPlan);
+
+                // Navigate to workout.html
+                window.location.href = 'workout.html';
+            };
+        });
+
+        // Skip button
+        document.getElementById('skipBtn').addEventListener('click', () => {
+            window.location.href = 'workout.html';
+        });
+
+        // Mark initialized and placeholder backend save
+        function markWorkoutInitialized(workoutPlan) {
+            localStorage.setItem('workoutInitialized', 'true');
+
+            // Placeholder for backend persistence
+            // Replace URL with real endpoint when available
+            fetch('http://localhost:8000/api/init-workout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(workoutPlan)
+            }).catch(err => {
+                console.warn('Workout init save failed (placeholder):', err);
+            });
+        }
+    </script>
+</body>
+</html>

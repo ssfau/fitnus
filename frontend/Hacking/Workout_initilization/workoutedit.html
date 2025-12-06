@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitnus - Edit Workout</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .workout-edit-container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            margin: 0;
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .templates-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .templates-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .templates-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .templates-container::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5);
+            border-radius: 4px;
+        }
+
+        .templates-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.7);
+        }
+
+        .template-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .template-name-input {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .template-name-input input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .template-name-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-delete {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            color: #ff4444;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff4444;
+        }
+
+        .week-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+        }
+
+        .day-column {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 400px;
+        }
+
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .day-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .add-workout-btn {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px dashed rgba(139, 92, 246, 0.5);
+            color: #8b5cf6;
+            padding: 0.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-workout-btn:hover {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+
+        .workout-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .workout-item-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .workout-item-details {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Popup Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-result-item {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .search-result-item:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-save {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .selected-exercise {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid #8b5cf6;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .selected-exercise-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .remove-exercise {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-exercise:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff4444;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .confirmation-modal .modal-content {
+            max-width: 400px;
+        }
+
+        .confirmation-message {
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-danger {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            color: #ff4444;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff4444;
+        }
+
+        .template-name-edit {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .btn-edit-name {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit-name:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="logo-text">Fitnus</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="homepage.html" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="workout.html" class="nav-link">
+                            <i class="fas fa-dumbbell"></i>
+                            <span>Workout</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Nutrition</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Community</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="workout-edit-container">
+                <div class="page-header">
+                    <h1>Workout Template Editor</h1>
+                    <button class="btn-primary" id="createTemplateBtn">
+                        <i class="fas fa-plus"></i> Create Template
+                    </button>
+                </div>
+
+                <!-- Templates Container -->
+                <div class="templates-container" id="templatesContainer">
+                    <!-- Templates will be dynamically added here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Workout Modal -->
+    <div class="modal-overlay" id="addWorkoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Workout</h2>
+                <button class="close-btn" onclick="closeAddWorkoutModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addWorkoutForm">
+                <div class="form-group">
+                    <label class="form-label">Search Exercise</label>
+                    <input type="text" class="form-input" id="exerciseSearch" placeholder="Search for an exercise..." oninput="searchExercises(this.value)">
+                    <div class="search-results" id="searchResults"></div>
+                    <div id="selectedExercise" class="hidden"></div>
+                </div>
+                <div class="form-group">
+                    <div class="input-row">
+                        <div>
+                            <label class="form-label">Sets *</label>
+                            <input type="number" class="form-input" id="workoutSets" min="1" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Reps *</label>
+                            <input type="number" class="form-input" id="workoutReps" min="1" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" class="form-input" id="workoutWeight" min="0" step="0.5">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeAddWorkoutModal()">Cancel</button>
+                    <button type="submit" class="btn-save" id="saveWorkoutBtn" disabled>Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay confirmation-modal" id="deleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Template</h2>
+                <button class="close-btn" onclick="closeDeleteConfirmModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="confirmation-message">
+                Are you sure you want to delete this template? This action cannot be undone.
+            </div>
+            <div class="confirmation-actions">
+                <button type="button" class="btn-cancel" onclick="closeDeleteConfirmModal()">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let templates = [];
+        let currentDay = null;
+        let currentTemplateId = null;
+        let selectedExercise = null;
+        let templateToDelete = null;
+
+        // Initialize with default template
+        function init() {
+            // Create default template with placeholder workouts
+            const defaultTemplate = {
+                id: Date.now(),
+                name: 'Default Workout Template',
+                workouts: {
+                    Monday: [
+                        { name: 'Bench Press', sets: 4, reps: 10, weight: 60 },
+                        { name: 'Incline Dumbbell Press', sets: 3, reps: 12, weight: 25 }
+                    ],
+                    Tuesday: [
+                        { name: 'Squat', sets: 5, reps: 8, weight: 100 },
+                        { name: 'Leg Press', sets: 4, reps: 12, weight: 150 }
+                    ],
+                    Wednesday: [
+                        { name: 'Pull-ups', sets: 4, reps: 10, weight: null },
+                        { name: 'Barbell Rows', sets: 4, reps: 10, weight: 70 }
+                    ],
+                    Thursday: [
+                        { name: 'Overhead Press', sets: 4, reps: 8, weight: 50 },
+                        { name: 'Lateral Raises', sets: 3, reps: 12, weight: 15 }
+                    ],
+                    Friday: [
+                        { name: 'Deadlift', sets: 5, reps: 5, weight: 120 },
+                        { name: 'Romanian Deadlift', sets: 3, reps: 10, weight: 80 }
+                    ],
+                    Saturday: [],
+                    Sunday: []
+                }
+            };
+            templates.push(defaultTemplate);
+            renderTemplates();
+        }
+
+        // Create new template
+        document.getElementById('createTemplateBtn').addEventListener('click', () => {
+            const newTemplate = {
+                id: Date.now(),
+                name: `Template ${templates.length + 1}`,
+                workouts: {
+                    Monday: [],
+                    Tuesday: [],
+                    Wednesday: [],
+                    Thursday: [],
+                    Friday: [],
+                    Saturday: [],
+                    Sunday: []
+                }
+            };
+            templates.unshift(newTemplate); // Add to top
+            renderTemplates();
+            // Focus on the new template's name input
+            setTimeout(() => {
+                const nameInput = document.querySelector(`[data-template-id="${newTemplate.id}"] .template-name-input input`);
+                if (nameInput) {
+                    nameInput.focus();
+                    nameInput.select();
+                }
+            }, 100);
+        });
+
+        // Render all templates
+        function renderTemplates() {
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = templates.map(template => createTemplateHTML(template)).join('');
+        }
+
+        // Create template HTML
+        function createTemplateHTML(template) {
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const dayIds = days.map(d => d.toLowerCase());
+            
+            return `
+                <div class="template-card" data-template-id="${template.id}">
+                    <div class="template-card-header">
+                        <div class="template-name-edit">
+                            <div class="template-name-input">
+                                <input type="text" value="${template.name}" 
+                                    onblur="updateTemplateName(${template.id}, this.value)"
+                                    onkeypress="if(event.key === 'Enter') this.blur()">
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn-delete" onclick="showDeleteConfirm(${template.id})">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="week-calendar">
+                        ${days.map((day, index) => `
+                            <div class="day-column" data-day="${day}">
+                                <div class="day-header">${day}</div>
+                                <div class="day-content" id="template-${template.id}-${dayIds[index]}-content">
+                                    ${renderWorkoutsForDay(template.workouts[day])}
+                                    <button class="add-workout-btn" onclick="openAddWorkoutModal('${day}', ${template.id})">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Add Workout</span>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render workouts for a day
+        function renderWorkoutsForDay(workouts) {
+            if (!workouts || workouts.length === 0) return '';
+            return workouts.map(workout => `
+                <div class="workout-item">
+                    <div class="workout-item-name">${workout.name}</div>
+                    <div class="workout-item-details">
+                        <span>${workout.sets} sets</span>
+                        <span>•</span>
+                        <span>${workout.reps} reps</span>
+                        ${workout.weight ? `<span>•</span><span>${workout.weight} kg</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update template name
+        function updateTemplateName(templateId, newName) {
+            const template = templates.find(t => t.id === templateId);
+            if (template) {
+                template.name = newName || `Template ${templateId}`;
+            }
+        }
+
+        // Show delete confirmation
+        function showDeleteConfirm(templateId) {
+            templateToDelete = templateId;
+            document.getElementById('deleteConfirmModal').classList.add('active');
+        }
+
+        // Close delete confirmation
+        function closeDeleteConfirmModal() {
+            document.getElementById('deleteConfirmModal').classList.remove('active');
+            templateToDelete = null;
+        }
+
+        // Confirm delete
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            if (templateToDelete) {
+                templates = templates.filter(t => t.id !== templateToDelete);
+                renderTemplates();
+                closeDeleteConfirmModal();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('deleteConfirmModal').addEventListener('click', (e) => {
+            if (e.target.id === 'deleteConfirmModal') {
+                closeDeleteConfirmModal();
+            }
+        });
+
+        // Open Add Workout Modal
+        function openAddWorkoutModal(day, templateId) {
+            currentDay = day;
+            currentTemplateId = templateId;
+            document.getElementById('addWorkoutModal').classList.add('active');
+            document.getElementById('exerciseSearch').value = '';
+            document.getElementById('workoutSets').value = '';
+            document.getElementById('workoutReps').value = '';
+            document.getElementById('workoutWeight').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('selectedExercise').classList.add('hidden');
+            selectedExercise = null;
+            updateSaveButton();
+        }
+
+        // Close Add Workout Modal
+        function closeAddWorkoutModal() {
+            document.getElementById('addWorkoutModal').classList.remove('active');
+            currentDay = null;
+            currentTemplateId = null;
+            selectedExercise = null;
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('addWorkoutModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addWorkoutModal') {
+                closeAddWorkoutModal();
+            }
+        });
+
+        // Search Exercises (Placeholder)
+        function searchExercises(query) {
+            const searchResults = document.getElementById('searchResults');
+            const selectedExerciseDiv = document.getElementById('selectedExercise');
+            
+            if (!query || query.trim() === '') {
+                searchResults.innerHTML = '';
+                selectedExerciseDiv.classList.add('hidden');
+                selectedExercise = null;
+                updateSaveButton();
+                return;
+            }
+
+            // Placeholder: Show options 1-10
+            const placeholderExercises = [];
+            for (let i = 1; i <= 10; i++) {
+                placeholderExercises.push(`Exercise ${i} - ${query}`);
+            }
+
+            searchResults.innerHTML = placeholderExercises.map((exercise, index) => `
+                <div class="search-result-item" onclick="selectExercise('${exercise}', ${index})">
+                    ${exercise}
+                </div>
+            `).join('');
+        }
+
+        // Select Exercise
+        function selectExercise(exerciseName, index) {
+            selectedExercise = exerciseName;
+            const selectedExerciseDiv = document.getElementById('selectedExercise');
+            selectedExerciseDiv.innerHTML = `
+                <div class="selected-exercise">
+                    <span class="selected-exercise-name">${exerciseName}</span>
+                    <button type="button" class="remove-exercise" onclick="clearSelectedExercise()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            selectedExerciseDiv.classList.remove('hidden');
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('exerciseSearch').value = exerciseName;
+            updateSaveButton();
+        }
+
+        // Clear Selected Exercise
+        function clearSelectedExercise() {
+            selectedExercise = null;
+            document.getElementById('selectedExercise').classList.add('hidden');
+            document.getElementById('exerciseSearch').value = '';
+            updateSaveButton();
+        }
+
+        // Update Save Button State
+        function updateSaveButton() {
+            const sets = document.getElementById('workoutSets').value;
+            const reps = document.getElementById('workoutReps').value;
+            const saveBtn = document.getElementById('saveWorkoutBtn');
+            
+            if (selectedExercise && sets && reps && parseInt(sets) > 0 && parseInt(reps) > 0) {
+                saveBtn.disabled = false;
+            } else {
+                saveBtn.disabled = true;
+            }
+        }
+
+        // Listen to input changes
+        document.getElementById('workoutSets').addEventListener('input', updateSaveButton);
+        document.getElementById('workoutReps').addEventListener('input', updateSaveButton);
+
+        // Save Workout
+        document.getElementById('addWorkoutForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!selectedExercise) {
+                alert('Please select an exercise');
+                return;
+            }
+
+            const sets = parseInt(document.getElementById('workoutSets').value);
+            const reps = parseInt(document.getElementById('workoutReps').value);
+            const weight = document.getElementById('workoutWeight').value ? parseFloat(document.getElementById('workoutWeight').value) : null;
+
+            if (!sets || !reps || sets <= 0 || reps <= 0) {
+                alert('Sets and reps are required and must be greater than 0');
+                return;
+            }
+
+            // Find template and add workout
+            const template = templates.find(t => t.id === currentTemplateId);
+            if (template) {
+                const workout = {
+                    name: selectedExercise,
+                    sets: sets,
+                    reps: reps,
+                    weight: weight
+                };
+
+                template.workouts[currentDay].push(workout);
+                renderTemplates();
+                closeAddWorkoutModal();
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+        }
+
+        // Initialize on load
+        init();
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

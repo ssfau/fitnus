@@ -433,6 +433,8 @@ function setActiveNavLink() {
 document.addEventListener('DOMContentLoaded', () => {
     setActiveNavLink();
     
+    initWorkoutNav();
+
     const sections = document.querySelectorAll('.nutrition-card, .goal-card, .meal-planner-card');
     sections.forEach((section, index) => {
         section.style.opacity = '0';
@@ -444,4 +446,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }, index * 100);
     });
 });
+
+// Workout navigation: first-time goes to init
+function initWorkoutNav() {
+    const workoutLinks = document.querySelectorAll('.nav-link[data-nav="workout"]');
+    const initPath = '../Workout_initilization/workoutinit.html';
+    const workoutPath = '../Workout_initilization/workout.html';
+
+    workoutLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const initialized = localStorage.getItem('workoutInitialized') === 'true';
+            window.location.href = initialized ? workoutPath : initPath;
+        });
+    });
+}
 

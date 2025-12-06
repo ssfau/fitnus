@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitnus - Workout Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page fade-in */
+        body {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .workout-main-content {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 2rem;
+        }
+
+        .calendar-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav-btn:hover {
+            background: var(--accent-gradient);
+            border-color: transparent;
+        }
+
+        .calendar-month-year {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow: visible;
+        }
+
+        .calendar-day:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-day.today {
+            background: #ef4444;
+            border-color: #ef4444;
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.has-workout {
+            border-color: var(--accent-purple);
+        }
+
+        .calendar-day-number {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-day-workout {
+            font-size: 0.65rem;
+            color: var(--accent-purple);
+            text-align: center;
+            line-height: 1.2;
+            margin-top: auto;
+        }
+
+        .calendar-day.today .calendar-day-workout {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .calendar-day.completed {
+            position: relative;
+            border-color: #10b981;
+        }
+
+        .calendar-day.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: bold;
+            z-index: 10;
+            line-height: 1;
+        }
+
+        .calendar-day.today.completed::after {
+            background: rgba(255, 255, 255, 0.95);
+            color: #10b981;
+        }
+
+        .workout-actions {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .workout-title-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .workout-title-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .workout-title-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .workout-list {
+            list-style: none;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .workout-list-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .workout-list-item i {
+            color: var(--accent-purple);
+            width: 20px;
+        }
+
+        .action-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .action-btn.start {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .action-btn.start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .action-btn.edit {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.edit:hover {
+            background: var(--bg-card);
+            border-color: var(--accent-purple);
+        }
+
+        .gym-ad-panel {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border: 2px solid var(--accent-purple);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gym-ad-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .gym-ad-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .gym-ad-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .gym-ad-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .gym-ad-content {
+            margin-bottom: 1rem;
+        }
+
+        .gym-ad-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .gym-ad-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .gym-ad-cta {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .gym-ad-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        @media (max-width: 1200px) {
+            .workout-main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calendar-days {
+                gap: 0.25rem;
+            }
+
+            .calendar-day {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="logo-text">Fitnus</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../Mainpage/index.html" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="workout.html" class="nav-link active">
+                            <i class="fas fa-dumbbell"></i>
+                            <span>Workout</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../Nutrients/nutrients.html" class="nav-link">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Nutrition</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Community</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">Workout Schedule</h1>
+                <div class="header-icons">
+                    <div class="icon-btn notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="icon-btn theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </div>
+                    <div class="icon-btn profile-btn">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="workout-main-content">
+                <!-- Left: Calendar and Workout Actions -->
+                <div>
+                    <div class="calendar-section">
+                        <div class="calendar-header">
+                            <h2 class="calendar-title">Workout Calendar</h2>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div class="calendar-month-year" id="currentMonthYear">January 2024</div>
+                                <div class="calendar-nav">
+                                    <button class="calendar-nav-btn" id="prevMonth">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="calendar-nav-btn" id="nextMonth">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="calendar-weekdays">
+                            <div class="calendar-weekday">Sun</div>
+                            <div class="calendar-weekday">Mon</div>
+                            <div class="calendar-weekday">Tue</div>
+                            <div class="calendar-weekday">Wed</div>
+                            <div class="calendar-weekday">Thu</div>
+                            <div class="calendar-weekday">Fri</div>
+                            <div class="calendar-weekday">Sat</div>
+                        </div>
+
+                        <div class="calendar-days" id="calendarDays">
+                            <!-- Calendar days will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="workout-actions">
+                        <div class="workout-title-section">
+                            <div class="workout-title-label">Today's Workout</div>
+                            <div class="workout-title-text" id="workoutTitle">Upper Body</div>
+                            <ul class="workout-list" id="workoutList">
+                                <li class="workout-list-item">
+                                    <i class="fas fa-dumbbell"></i>
+                                    <span>Bench Press - 3 sets x 10 reps</span>
+                                </li>
+                                <li class="workout-list-item">
+                                    <i class="fas fa-dumbbell"></i>
+                                    <span>Pull-ups - 3 sets x 8 reps</span>
+                                </li>
+                                <li class="workout-list-item">
+                                    <i class="fas fa-dumbbell"></i>
+                                    <span>Shoulder Press - 3 sets x 12 reps</span>
+                                </li>
+                                <li class="workout-list-item">
+                                    <i class="fas fa-dumbbell"></i>
+                                    <span>Bicep Curls - 3 sets x 10 reps</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <button class="action-btn start" id="startWorkoutBtn">
+                            <i class="fas fa-play"></i>
+                            <span>Start Workout</span>
+                        </button>
+
+                        <button class="action-btn edit" id="editWorkoutBtn">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit Workout</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Gym Ad Panel -->
+                <div>
+                    <div class="gym-ad-panel">
+                        <div class="gym-ad-header">
+                            <div class="gym-ad-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="gym-ad-title">Featured Gym</div>
+                        </div>
+                        <div class="gym-ad-content">
+                            <div class="gym-ad-name">Elite Fitness Center</div>
+                            <div class="gym-ad-description">
+                                Premium equipment, expert trainers, and state-of-the-art facilities. Join thousands of members achieving their fitness goals.
+                            </div>
+                        </div>
+                        <button class="gym-ad-cta">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Calendar functionality
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        let today = new Date();
+
+        // Get completed workout dates from localStorage
+        function getCompletedWorkouts() {
+            const completed = localStorage.getItem('completedWorkouts');
+            return completed ? JSON.parse(completed) : [];
+        }
+
+        // Save completed workout date
+        function markWorkoutCompleted(dateKey) {
+            const completed = getCompletedWorkouts();
+            if (!completed.includes(dateKey)) {
+                completed.push(dateKey);
+                localStorage.setItem('completedWorkouts', JSON.stringify(completed));
+                console.log('Marked workout as completed:', dateKey);
+                console.log('All completed workouts:', completed);
+            }
+        }
+
+        // Test function - add some sample completed dates (for testing)
+        // Call this in browser console: markTestCompletedDates()
+        window.markTestCompletedDates = function() {
+            markWorkoutCompleted('2024-01-05');
+            markWorkoutCompleted('2024-01-12');
+            markWorkoutCompleted('2024-01-15');
+            renderCalendar();
+            alert('Test completed dates added! Check January 5, 12, and 15.');
+        };
+
+        // Test function - add some sample completed dates (for testing)
+        // You can call this in browser console: markTestCompletedDates()
+        function markTestCompletedDates() {
+            // Mark a few dates as completed for testing
+            markWorkoutCompleted('2024-01-05');
+            markWorkoutCompleted('2024-01-12');
+            renderCalendar();
+        }
+
+        // Workout data for different dates (placeholder examples)
+        const workoutData = {
+            '2024-01-05': { title: 'Lower Body', workouts: ['Squats - 4 sets x 12 reps', 'Deadlifts - 3 sets x 8 reps', 'Leg Press - 3 sets x 15 reps'] },
+            '2024-01-08': { title: 'Cardio', workouts: ['Running - 30 min', 'Cycling - 20 min', 'Rowing - 15 min'] },
+            '2024-01-12': { title: 'Upper Body', workouts: ['Bench Press - 3 sets x 10 reps', 'Pull-ups - 3 sets x 8 reps', 'Shoulder Press - 3 sets x 12 reps', 'Bicep Curls - 3 sets x 10 reps'] },
+            '2024-01-15': { title: 'Full Body', workouts: ['Deadlifts - 4 sets x 6 reps', 'Squats - 3 sets x 10 reps', 'Bench Press - 3 sets x 8 reps'] },
+            '2024-01-18': { title: 'Core', workouts: ['Planks - 3 sets x 60s', 'Crunches - 3 sets x 20 reps', 'Russian Twists - 3 sets x 15 reps'] },
+            '2024-01-22': { title: 'Upper Body', workouts: ['Bench Press - 3 sets x 10 reps', 'Pull-ups - 3 sets x 8 reps', 'Shoulder Press - 3 sets x 12 reps', 'Bicep Curls - 3 sets x 10 reps'] },
+            '2024-01-25': { title: 'Lower Body', workouts: ['Squats - 4 sets x 12 reps', 'Deadlifts - 3 sets x 8 reps', 'Leg Press - 3 sets x 15 reps'] },
+        };
+
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        function formatDateKey(year, month, day) {
+            return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function isToday(year, month, day) {
+            return year === today.getFullYear() && 
+                   month === today.getMonth() && 
+                   day === today.getDate();
+        }
+
+        function renderCalendar() {
+            const calendarDays = document.getElementById('calendarDays');
+            const currentMonthYear = document.getElementById('currentMonthYear');
+            
+            currentMonthYear.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            calendarDays.innerHTML = '';
+
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const dayElement = createDayElement(currentYear, currentMonth - 1, day, true);
+                calendarDays.appendChild(dayElement);
+            }
+
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = createDayElement(currentYear, currentMonth, day, false);
+                calendarDays.appendChild(dayElement);
+            }
+
+            // Next month days to fill the grid
+            const totalCells = calendarDays.children.length;
+            const remainingCells = 42 - totalCells; // 6 rows x 7 days
+            for (let day = 1; day <= remainingCells; day++) {
+                const dayElement = createDayElement(currentYear, currentMonth + 1, day, true);
+                calendarDays.appendChild(dayElement);
+            }
+
+            // Update today's workout display
+            updateTodayWorkout();
+        }
+
+        function createDayElement(year, month, day, isOtherMonth) {
+            const dayElement = document.createElement('div');
+            const dateKey = formatDateKey(year, month, day);
+            const workout = workoutData[dateKey];
+            const isTodayDate = !isOtherMonth && isToday(year, month, day);
+            const completedWorkouts = getCompletedWorkouts();
+            const isCompleted = completedWorkouts.includes(dateKey);
+
+            dayElement.className = 'calendar-day';
+            if (isOtherMonth) dayElement.classList.add('other-month');
+            if (isTodayDate) dayElement.classList.add('today');
+            if (workout) dayElement.classList.add('has-workout');
+            if (isCompleted) dayElement.classList.add('completed');
+
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'calendar-day-number';
+            dayNumber.textContent = day;
+            dayElement.appendChild(dayNumber);
+
+            if (workout) {
+                const workoutText = document.createElement('div');
+                workoutText.className = 'calendar-day-workout';
+                workoutText.textContent = workout.title;
+                dayElement.appendChild(workoutText);
+            }
+
+            dayElement.addEventListener('click', () => {
+                if (workout) {
+                    updateWorkoutDisplay(workout);
+                }
+            });
+
+            return dayElement;
+        }
+
+        function updateTodayWorkout() {
+            const todayKey = formatDateKey(today.getFullYear(), today.getMonth(), today.getDate());
+            const todayWorkout = workoutData[todayKey];
+            
+            if (todayWorkout) {
+                updateWorkoutDisplay(todayWorkout);
+            }
+        }
+
+        function updateWorkoutDisplay(workout) {
+            document.getElementById('workoutTitle').textContent = workout.title;
+            const workoutList = document.getElementById('workoutList');
+            workoutList.innerHTML = '';
+            
+            workout.workouts.forEach(workoutItem => {
+                const li = document.createElement('li');
+                li.className = 'workout-list-item';
+                li.innerHTML = `
+                    <i class="fas fa-dumbbell"></i>
+                    <span>${workoutItem}</span>
+                `;
+                workoutList.appendChild(li);
+            });
+        }
+
+        // Month navigation
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        });
+
+        // Button actions
+        document.getElementById('startWorkoutBtn').addEventListener('click', () => {
+            // Get current workout data
+            const workoutTitle = document.getElementById('workoutTitle').textContent;
+            const workoutList = document.getElementById('workoutList');
+            const workoutItems = Array.from(workoutList.querySelectorAll('.workout-list-item span')).map(span => span.textContent);
+            
+            // Check if there's a workout selected
+            if (!workoutTitle || workoutTitle === 'No Workout' || workoutItems.length === 0) {
+                alert('Please select a workout from the calendar first.');
+                return;
+            }
+
+            // Get the selected date from calendar (use today if no specific date selected)
+            const todayKey = formatDateKey(today.getFullYear(), today.getMonth(), today.getDate());
+            
+            // Store workout data in localStorage to pass to workoutstart.html
+            const workoutSession = {
+                title: workoutTitle,
+                workouts: workoutItems,
+                date: new Date().toISOString(),
+                dateKey: todayKey
+            };
+
+            localStorage.setItem('workoutSession', JSON.stringify(workoutSession));
+
+            // Navigate to workout start page
+            window.location.href = 'workoutstart.html';
+        });
+
+        // Check if returning from completed workout and mark it
+        window.addEventListener('load', () => {
+            const workoutSession = localStorage.getItem('workoutSession');
+            if (workoutSession) {
+                const session = JSON.parse(workoutSession);
+                // Check if workout was completed (you can add a flag when workout is finished)
+                const completedFlag = localStorage.getItem('workoutCompleted');
+                if (completedFlag === 'true' && session.dateKey) {
+                    markWorkoutCompleted(session.dateKey);
+                    localStorage.removeItem('workoutCompleted');
+                    // Refresh calendar to show completed marker
+                    renderCalendar();
+                }
+            }
+        });
+
+        document.getElementById('editWorkoutBtn').addEventListener('click', () => {
+            window.location.href = 'workoutedit.html';
+        });
+
+        // Initialize calendar on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                renderCalendar();
+                // For testing: Uncomment the line below to see markers on sample dates
+                // markTestCompletedDates();
+            });
+        } else {
+            renderCalendar();
+            // For testing: Uncomment the line below to see markers on sample dates
+            // markTestCompletedDates();
+        }
+    </script>
+</body>
+</html>
