@@ -122,10 +122,11 @@ body {
 
 .nav-link:hover,
 .nav-link.active {
-    background: var(--bg-card);
-    color: var(--text-primary);
+    background: var(--accent-gradient);
+    color: white;
     transform: translateX(4px);
-    box-shadow: 0 4px 12px var(--shadow);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+    border: none;
 }
 
 .nav-link i {

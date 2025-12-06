@@ -275,8 +275,36 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Set active navigation link based on current page
+function setActiveNavLink() {
+    const currentPath = window.location.pathname;
+    const currentPage = currentPath.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    // Remove all active classes first
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // Determine which page we're on and set active accordingly
+    if (currentPage.includes('index.html') || currentPage === '' || currentPath.includes('Mainpage')) {
+        // Dashboard page
+        const dashboardLink = Array.from(navLinks).find(link => 
+            link.textContent.includes('Dashboard') || link.getAttribute('href') === '#' || 
+            link.getAttribute('href').includes('index.html')
+        );
+        if (dashboardLink) dashboardLink.classList.add('active');
+    } else if (currentPage.includes('nutrients.html') || currentPath.includes('Nutrients')) {
+        // Nutrition page
+        const nutritionLink = Array.from(navLinks).find(link => 
+            link.textContent.includes('Nutrition') || link.getAttribute('href').includes('nutrients')
+        );
+        if (nutritionLink) nutritionLink.classList.add('active');
+    }
+}
+
 // Add loading animation
 document.addEventListener('DOMContentLoaded', () => {
+    setActiveNavLink();
+    
     const sections = document.querySelectorAll('.ai-section, .main-grid, .recovery-section');
     sections.forEach((section, index) => {
         section.style.opacity = '0';

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitnus - Nutrition Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px); 
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="logo-text">Fitnus</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="../Mainpage/index.html" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-dumbbell"></i>
+                            <span>Workout</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="nutrients.html" class="nav-link">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Nutrition</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Community</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">Nutrition Tracker</h1>
+                <div class="header-center">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search meals, recipes..." class="search-input">
+                    </div>
+                    <div class="streaks-widget">
+                        <div class="streak-item fire">
+                            <i class="fas fa-fire"></i>
+                            <span>7 Day Streak</span>
+                        </div>
+                        <div class="streak-item nutrition">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Nutrition</span>
+                        </div>
+                        <div class="streak-item check">
+                            <i class="fas fa-trophy"></i>
+                            <span>Challenge</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-icons">
+                    <div class="icon-btn notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="icon-btn theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </div>
+                    <div class="icon-btn profile-btn">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Grid -->
+            <div class="main-grid">
+                <!-- Left Column (60%) -->
+                <div class="left-column">
+                    <!-- Daily Nutrition Tracker -->
+                    <div class="nutrition-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-camera"></i>
+                            Log Meal with AI Vision
+                        </h2>
+                        
+                        <div class="tracker-form">
+                            <div class="form-group">
+                                <label for="mealDate">Date</label>
+                                <input type="date" id="mealDate" class="date-input">
+                            </div>
+
+                            <div class="upload-zone" id="uploadZone">
+                                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                                <div class="upload-content">
+                                    <i class="fas fa-camera upload-icon"></i>
+                                    <p class="upload-text">Upload Meal Photo for Analysis</p>
+                                    <p class="upload-hint">Drag & drop or click to browse</p>
+                                </div>
+                                <div class="upload-preview" id="uploadPreview" style="display: none;">
+                                    <img id="previewImage" src="" alt="Preview">
+                                    <button class="remove-image" id="removeImage">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="analyze-btn" id="analyzeBtn" disabled>
+                                <i class="fas fa-magic"></i>
+                                Analyze Meal
+                            </button>
+
+                            <!-- Loading Spinner -->
+                            <div class="loading-container" id="loadingContainer" style="display: none;">
+                                <div class="spinner"></div>
+                                <p class="loading-text">Claude API is analyzing food composition...</p>
+                            </div>
+
+                            <!-- Meal Breakdown Result -->
+                            <div class="meal-breakdown" id="mealBreakdown" style="display: none;">
+                                <h3 class="breakdown-title">Meal Breakdown</h3>
+                                <div class="meal-name" id="mealName">Grilled Chicken & Rice</div>
+                                
+                                <div class="calories-display">
+                                    <span class="calories-value" id="caloriesValue">450</span>
+                                    <span class="calories-unit">kcal</span>
+                                </div>
+
+                                <div class="macros-container">
+                                    <div class="macro-item">
+                                        <div class="macro-header">
+                                            <span class="macro-label">Protein</span>
+                                            <span class="macro-amount" id="proteinAmount">40g</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill protein" id="proteinProgress" style="width: 50%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="macro-item">
+                                        <div class="macro-header">
+                                            <span class="macro-label">Carbs</span>
+                                            <span class="macro-amount" id="carbsAmount">50g</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill carbs" id="carbsProgress" style="width: 40%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="macro-item">
+                                        <div class="macro-header">
+                                            <span class="macro-label">Fat</span>
+                                            <span class="macro-amount" id="fatAmount">10g</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill fat" id="fatProgress" style="width: 20%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="add-to-log-btn" id="addToLogBtn">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Add to Log
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Stats Summary -->
+                    <div class="daily-stats-card">
+                        <h3 class="section-title">Daily Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Total Calories</div>
+                                <div class="stat-value" id="totalCalories">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Protein</div>
+                                <div class="stat-value" id="totalProtein">0g</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Carbs</div>
+                                <div class="stat-value" id="totalCarbs">0g</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Fat</div>
+                                <div class="stat-value" id="totalFat">0g</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (40%) -->
+                <div class="right-column">
+                    <!-- Goal Summary -->
+                    <div class="goal-card">
+                        <h3 class="card-title">Daily Limits</h3>
+                        <div class="goal-info">
+                            <div class="goal-type" id="goalType">Bulking - 3000 kcal</div>
+                            <div class="goal-progress">
+                                <div class="progress-bar-large">
+                                    <div class="progress-fill-large" id="goalProgressFill" style="width: 0%;"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span id="currentCalories">0</span> / <span id="goalCalories">3000</span> kcal
+                                </div>
+                            </div>
+                            <div class="goal-feedback" id="goalFeedback">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Start logging meals to track your progress</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Meal Planner -->
+                    <div class="meal-planner-card">
+                        <h3 class="card-title">
+                            <i class="fas fa-robot"></i>
+                            AI Chef Suggestion
+                        </h3>
+                        <div class="planner-form">
+                            <div class="form-group">
+                                <label for="goalFocus">Goal Focus</label>
+                                <select id="goalFocus" class="select-input">
+                                    <option value="high-protein">High Protein</option>
+                                    <option value="low-carb">Low Carb</option>
+                                    <option value="pre-workout">Pre-Workout</option>
+                                    <option value="post-workout">Post-Workout</option>
+                                    <option value="weight-loss">Weight Loss</option>
+                                    <option value="muscle-gain">Muscle Gain</option>
+                                </select>
+                            </div>
+                            <button class="generate-meal-btn" id="generateMealBtn">
+                                <i class="fas fa-sparkles"></i>
+                                Generate Meal
+                            </button>
+                        </div>
+
+                        <!-- Generated Meal Card -->
+                        <div class="generated-meal" id="generatedMeal" style="display: none;">
+                            <div class="meal-card-header">
+                                <h4 class="meal-name" id="generatedMealName">Salmon Poke Bowl</h4>
+                                <div class="meal-calories" id="generatedMealCalories">520 kcal</div>
+                            </div>
+                            <div class="meal-recipe">
+                                <h5>Recipe:</h5>
+                                <ul class="recipe-list" id="recipeList">
+                                    <li>200g fresh salmon, cubed</li>
+                                    <li>150g brown rice</li>
+                                    <li>50g avocado</li>
+                                    <li>30g edamame</li>
+                                    <li>20g seaweed</li>
+                                    <li>Sesame seeds & soy sauce</li>
+                                </ul>
+                            </div>
+                            <div class="meal-macros">
+                                <div class="macro-badge">
+                                    <span class="macro-badge-label">Protein</span>
+                                    <span class="macro-badge-value" id="generatedProtein">45g</span>
+                                </div>
+                                <div class="macro-badge">
+                                    <span class="macro-badge-label">Carbs</span>
+                                    <span class="macro-badge-value" id="generatedCarbs">55g</span>
+                                </div>
+                                <div class="macro-badge">
+                                    <span class="macro-badge-label">Fat</span>
+                                    <span class="macro-badge-value" id="generatedFat">15g</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

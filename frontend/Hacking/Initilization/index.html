@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitnus - Onboarding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Intro Banner -->
+    <div class="intro-banner" id="introBanner">
+        <div class="grid-overlay"></div>
+        <div class="intro-content">
+            <h1 class="intro-title">
+                <span class="intro-word">Fitnus</span>
+                <span class="intro-dot">.</span>
+            </h1>
+            <p class="intro-tagline">Stay fit with nus!</p>
+            <div class="scroll-bubble" id="scrollBubble">
+                <span class="bubble-text">Scroll down to begin</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-gradient"></div>
+    
+    <div class="container" id="mainContainer">
+        <div class="glass-card">
+            <!-- Progress Indicator -->
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="step-indicator">
+                <span id="currentStep">1</span> / <span id="totalSteps">5</span>
+            </div>
+
+            <!-- Step 1: Welcome & ID Generation -->
+            <div class="step active" id="step1">
+                <div class="step-content">
+                    <div class="step-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h1 class="step-title">Welcome to FitLife</h1>
+                    <p class="step-description">Let's build your personalized fitness plan</p>
+                    <div class="user-id-display">
+                        <span class="user-id-label">Your User ID:</span>
+                        <span class="user-id-value" id="userId">USER-0000</span>
+                    </div>
+                    <button class="btn-primary" onclick="nextStep()">
+                        Get Started
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Biometrics Input -->
+            <div class="step" id="step2">
+                <div class="step-content">
+                    <div class="step-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 class="step-title">Tell Us About Yourself</h2>
+                    <p class="step-description">We need some basic information to calculate your goals</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Sex</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn" data-value="male" onclick="selectSex('male')">
+                                <i class="fas fa-mars"></i>
+                                Male
+                            </button>
+                            <button class="toggle-btn" data-value="female" onclick="selectSex('female')">
+                                <i class="fas fa-venus"></i>
+                                Female
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age" class="form-label">Age</label>
+                        <input type="number" id="age" class="form-input" placeholder="Enter your age" min="13" max="120">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="height" class="form-label">Height (cm)</label>
+                            <input type="number" id="height" class="form-input" placeholder="175" min="100" max="250">
+                        </div>
+                        <div class="form-group">
+                            <label for="weight" class="form-label">Weight (kg)</label>
+                            <input type="number" id="weight" class="form-input" placeholder="70" min="30" max="300" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button class="btn-primary" onclick="validateStep2()">
+                            Next
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Goal Selection -->
+            <div class="step" id="step3">
+                <div class="step-content">
+                    <div class="step-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h2 class="step-title">What's Your Goal?</h2>
+                    <p class="step-description">Choose the goal that best matches your fitness journey</p>
+                    
+                    <div class="goal-cards">
+                        <div class="goal-card" data-goal="lose" onclick="selectGoal('lose')">
+                            <div class="goal-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <h3>Lose Weight</h3>
+                            <p>Burn fat and get leaner</p>
+                        </div>
+                        <div class="goal-card" data-goal="maintain" onclick="selectGoal('maintain')">
+                            <div class="goal-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <h3>Maintain</h3>
+                            <p>Keep your current weight</p>
+                        </div>
+                        <div class="goal-card" data-goal="gain" onclick="selectGoal('gain')">
+                            <div class="goal-icon">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                            <h3>Gain Muscle</h3>
+                            <p>Build strength and size</p>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button class="btn-primary" id="step3Next" onclick="validateStep3()" disabled>
+                            Next
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Calculation Results -->
+            <div class="step" id="step4">
+                <div class="step-content">
+                    <div class="step-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h2 class="step-title">Your Personalized Plan</h2>
+                    <p class="step-description">Based on your information, here's what we calculated</p>
+                    
+                    <div class="results-card">
+                        <div class="result-item">
+                            <div class="result-label">BMR (Basal Metabolic Rate)</div>
+                            <div class="result-value" id="bmrValue">0</div>
+                            <div class="result-unit">calories/day</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Daily Calorie Goal</div>
+                            <div class="result-value" id="calorieGoalValue">0</div>
+                            <div class="result-unit">calories/day</div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-secondary" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button class="btn-primary" onclick="nextStep()">
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Backend Sync -->
+            <div class="step" id="step5">
+                <div class="step-content">
+                    <div class="step-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h2 class="step-title">Saving Your Profile</h2>
+                    <p class="step-description">We're syncing your data with our servers</p>
+                    
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <p>Connecting to server...</p>
+                    </div>
+
+                    <div class="success-message" id="successMessage" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Profile saved successfully!</p>
+                    </div>
+
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p id="errorText">Failed to sync with server</p>
+                        <button class="btn-primary" onclick="retrySync()">
+                            <i class="fas fa-redo"></i>
+                            Retry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
