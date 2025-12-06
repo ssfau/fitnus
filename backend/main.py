@@ -9,7 +9,7 @@ app = FastAPI(openapi_prefix="/api")
 Base.metadata.create_all(bind=engine)
 
 app.include_router(nutrition_router, prefix="/nutrition")
-app.include_router(workout_router, prefix="/workout")
+app.include_router(workout_router, prefix="/workouts")
 app.include_router(settings_router, prefix="/settings")
 
 # Local development run

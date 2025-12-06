@@ -26,47 +26,6 @@ class UserConfigResponse(UserConfigBase):
     user_id: str = Field(..., examples=["abc123xyz"])
 
 
-class ExerciseBase(BaseModel):
-    name: str = Field(..., examples=["Bench Press"])
-    sets: int = Field(..., examples=[4])
-    reps: int = Field(..., examples=[10])
-    weight: float | None = Field(default=None, examples=[60.0])
-
-
-class ExerciseCreate(ExerciseBase):
-    pass
-
-
-class ExerciseResponse(ExerciseBase):
-    id: int = Field(..., examples=[1])
-
-class WorkoutSessionBase(BaseModel):
-    day: str = Field(..., examples=["Monday"])
-    name: str = Field(..., examples=["Chest Day"])
-    exercises: List[ExerciseCreate] = Field(default_factory=list)
-
-
-class WorkoutSessionCreate(WorkoutSessionBase):
-    user_id: str = Field(..., examples=["abc123xyz"])
-
-
-class WorkoutSessionResponse(WorkoutSessionBase):
-    id: int = Field(..., examples=[12])
-    user_id: str = Field(..., examples=["abc123xyz"])
-
-class WorkoutHistoryBase(BaseModel):
-    date: str = Field(..., examples=["2025-12-05"])
-    completed_exercises: List[ExerciseCreate]
-
-
-class WorkoutHistoryCreate(WorkoutHistoryBase):
-    user_id: str = Field(..., examples=["abc123xyz"])
-
-
-class WorkoutHistoryResponse(WorkoutHistoryBase):
-    id: int = Field(..., examples=[99])
-    user_id: str = Field(..., examples=["abc123xyz"])
-
 class MealBase(BaseModel):
     img_url: str | None = Field(default=None, examples=["https://..."])
     calories: float = Field(..., examples=[520])
@@ -128,3 +87,57 @@ class WeightProjectionResponse(BaseModel):
     one_month: Optional[float] = Field(default=None, examples=[58.0])
     three_months: Optional[float] = Field(default=None, examples=[57.0])
 
+
+# -----------------------------
+# WORKOUT SCHEMAS
+# -----------------------------
+
+class CompletedExercise(BaseModel):
+    name: str = Field(..., examples=["Bench Press"])
+    sets: int = Field(..., examples=[4])
+    reps: int = Field(..., examples=[10])
+    weight: float | None = Field(default=None, examples=[60.0])
+
+
+class WorkoutTemplateCreate(BaseModel):
+    name: str = Field(..., examples=["Push/Pull/Legs Split"])
+    is_weekly: bool = Field(default=True, examples=[True])
+    template_data: dict = Field(..., examples=[{"Monday": [{"name": "Bench Press", "sets": 4, "reps": 10}], "Wednesday": [{"name": "Squat", "sets": 5, "reps": 8}]}])
+
+
+class WorkoutTemplateResponse(BaseModel):
+    id: int = Field(..., examples=[1])
+    user_id: str = Field(..., examples=["abc123xyz"])
+    name: str = Field(..., examples=["Push/Pull/Legs Split"])
+    is_weekly: bool = Field(..., examples=[True])
+    template_data: dict = Field(..., examples=[{"Monday": [{"name": "Bench Press", "sets": 4, "reps": 10}]}])
+    created_at: str = Field(..., examples=["2025-12-05"])
+
+
+class WorkoutTemplateUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, examples=["Updated Template Name"])
+    template_data: Optional[dict] = Field(default=None, examples=[{"Monday": [{"name": "Bench Press", "sets": 4, "reps": 10}]}])
+
+
+class WorkoutWeekResponse(BaseModel):
+    week_start: str = Field(..., examples=["2025-12-02"])
+    plan_data: dict = Field(..., examples=[{"Monday": [{"name": "Bench Press", "sets": 4, "reps": 10}], "Wednesday": [{"name": "Squat", "sets": 5, "reps": 8}]}])
+    is_auto_generated: bool = Field(default=False, examples=[False])
+
+
+class WorkoutCompleteRequest(BaseModel):
+    date: str = Field(..., examples=["2025-12-05"])
+    completed_exercises: List[CompletedExercise] = Field(..., examples=[[{"name": "Bench Press", "sets": 4, "reps": 10, "weight": 60.0}]])
+
+
+class WorkoutCompleteResponse(BaseModel):
+    id: int = Field(..., examples=[1])
+    user_id: str = Field(..., examples=["abc123xyz"])
+    date: str = Field(..., examples=["2025-12-05"])
+    completed_exercises: List[dict] = Field(..., examples=[[{"name": "Bench Press", "sets": 4, "reps": 10, "weight": 60.0}]])
+    streak: int = Field(..., examples=[5])
+
+
+class WorkoutHomeResponse(BaseModel):
+    motivational_quote: str = Field(..., examples=["The only bad workout is the one that didn't happen!"])
+    today_workouts: List[dict] = Field(default_factory=list, examples=[[{"name": "Bench Press", "sets": 4, "reps": 10}]])
