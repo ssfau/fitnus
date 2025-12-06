@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitnus - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="logo-text">Fitnus</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-dumbbell"></i>
+                            <span>Workout</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Nutrition</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Community</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">Dashboard</h1>
+                <div class="header-center">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search workouts, exercises..." class="search-input">
+                    </div>
+                    <div class="streaks-widget">
+                        <div class="streak-item fire">
+                            <i class="fas fa-fire"></i>
+                            <span>7 Day Streak</span>
+                        </div>
+                        <div class="streak-item nutrition">
+                            <i class="fas fa-apple-alt"></i>
+                            <span>Nutrition</span>
+                        </div>
+                        <div class="streak-item check">
+                            <i class="fas fa-trophy"></i>
+                            <span>Challenge</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-icons">
+                    <div class="icon-btn notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="icon-btn theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </div>
+                    <div class="icon-btn profile-btn">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Daily Message Section (AI Personalization) -->
+            <section class="ai-section">
+                <div class="ai-header">
+                    <i class="fas fa-robot"></i>
+                    <h2>Daily Message</h2>
+                </div>
+                <div class="ai-input-group">
+                    <input type="text" class="ai-input" id="userIdInput" placeholder="Enter User ID">
+                    <button class="ai-submit-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="ai-response active">
+                    <div class="ai-card">
+                        <h3><i class="fas fa-quote-left"></i> Today's Challenge</h3>
+                        <p class="quote" id="dailyMessageText">Today's Challenge: Complete a 30-minute full-body workout focusing on strength and endurance. Push yourself to new limits!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Grid -->
+            <div class="main-grid">
+                <!-- Left Column -->
+                <div class="left-column">
+                    <!-- Workout Selector -->
+                    <div class="workout-selector">
+                        <button class="selector-pill active" data-workout="fullbody">Full Body</button>
+                        <button class="selector-pill" data-workout="upper">Upper Body</button>
+                        <button class="selector-pill" data-workout="lower">Lower Body</button>
+                        <button class="selector-pill" data-workout="cardio">Cardio</button>
+                        <button class="selector-pill" data-workout="core">Core</button>
+                    </div>
+
+                    <!-- Workout Title -->
+                    <div class="workout-title">
+                        <h1>Workout Overview</h1>
+                        <p>Interactive Body Map</p>
+                    </div>
+
+                    <!-- Body Model Container -->
+                    <div class="body-model-container">
+                        <!-- Left Side: Body Model -->
+                        <div class="body-model-wrapper">
+                            <div class="body-model">
+                                <svg class="body-svg" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Head -->
+                                    <circle cx="100" cy="30" r="22" class="muscle-group" data-muscle="head" 
+                                            fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Neck -->
+                                    <rect x="88" y="50" width="24" height="18" rx="8" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Chest (Pecs) - Wide and broad -->
+                                    <rect x="70" y="68" width="60" height="75" rx="15" class="muscle-group" data-muscle="chest" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Left Arm - Thick and muscular -->
+                                    <rect x="45" y="75" width="28" height="180" rx="12" class="muscle-group" data-muscle="leftarm" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Right Arm - Thick and muscular -->
+                                    <rect x="127" y="75" width="28" height="180" rx="12" class="muscle-group" data-muscle="rightarm" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Core/Abs - Tapered waist -->
+                                    <rect x="80" y="143" width="40" height="70" rx="12" class="muscle-group" data-muscle="core" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Left Leg - Thick quads -->
+                                    <rect x="65" y="213" width="32" height="160" rx="12" class="muscle-group" data-muscle="leftleg" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    
+                                    <!-- Right Leg - Thick quads -->
+                                    <rect x="103" y="213" width="32" height="160" rx="12" class="muscle-group" data-muscle="rightleg" 
+                                          fill="rgba(255, 255, 255, 0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Side: Muscle Activation Card -->
+                        <div class="muscle-activation-card" id="activationCard">
+                            <h3 id="muscleName">Overall Body</h3>
+                            <div class="muscle-value" id="muscleValue">72%</div>
+                            <div class="muscle-graph">
+                                <svg width="100%" height="100%" viewBox="0 0 220 80" preserveAspectRatio="none">
+                                    <polyline class="graph-line" id="graphLine" points="0,40 22,35 44,38 66,32 88,40 110,35 132,38 154,32 176,40 198,35 220,38" fill="none"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recovery Section -->
+                    <div class="recovery-section">
+                        <div class="section-header">
+                            <h3 class="section-title">Muscle Recovery Status</h3>
+                            <a href="#" class="view-all">View all</a>
+                        </div>
+                        <div class="recovery-grid">
+                            <div class="recovery-card sore">
+                                <div class="recovery-icon">💪</div>
+                                <div class="recovery-label">Biceps</div>
+                                <div class="recovery-status sore">Sore</div>
+                            </div>
+                            <div class="recovery-card sore">
+                                <div class="recovery-icon">🔥</div>
+                                <div class="recovery-label">Core</div>
+                                <div class="recovery-status sore">Sore</div>
+                            </div>
+                            <div class="recovery-card recovered">
+                                <div class="recovery-icon">🦵</div>
+                                <div class="recovery-label">Quads</div>
+                                <div class="recovery-status recovered">Recovered</div>
+                            </div>
+                            <div class="recovery-card recovered">
+                                <div class="recovery-icon">🏋️</div>
+                                <div class="recovery-label">Back</div>
+                                <div class="recovery-status recovered">Recovered</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="right-column">
+                    <!-- BMI Card -->
+                    <div class="bmi-card">
+                        <h3 class="bmi-title">Smart BMI Calculator</h3>
+                        <div class="bmi-gauge">
+                            <svg width="180" height="180">
+                                <defs>
+                                    <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="gauge-circle gauge-bg" cx="90" cy="90" r="70"/>
+                                <circle class="gauge-circle gauge-fill" id="gaugeFill" cx="90" cy="90" r="70" transform="rotate(-90 90 90)"/>
+                            </svg>
+                            <div class="gauge-center">
+                                <div class="gauge-value" id="bmiValue">24.8</div>
+                                <div class="gauge-label">BMI</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <span class="bmi-badge healthy" id="bmiBadge">You're Healthy</span>
+                        </div>
+                        <div class="bmi-sliders">
+                            <div class="slider-group">
+                                <div class="slider-label">
+                                    <span>Weight</span>
+                                    <span id="weightValue">70 Kg</span>
+                                </div>
+                                <input type="range" class="slider" id="weightSlider" min="30" max="150" value="70">
+                            </div>
+                            <div class="slider-group">
+                                <div class="slider-label">
+                                    <span>Height</span>
+                                    <span id="heightValue">175 cm</span>
+                                </div>
+                                <input type="range" class="slider" id="heightSlider" min="100" max="220" value="175">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card green">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <div class="metric-trend">
+                                    <i class="fas fa-arrow-up"></i> 12%
+                                </div>
+                            </div>
+                            <div class="metric-value" id="caloriesValue">2,450</div>
+                            <div class="metric-label">Calories</div>
+                        </div>
+                        <div class="metric-card blue">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="metric-trend">
+                                    <i class="fas fa-arrow-up"></i> 5%
+                                </div>
+                            </div>
+                            <div class="metric-value" id="heartRateValue">142</div>
+                            <div class="metric-label">HR (bpm)</div>
+                        </div>
+                        <div class="metric-card red">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div class="metric-trend">
+                                    <i class="fas fa-arrow-down"></i> 3%
+                                </div>
+                            </div>
+                            <div class="metric-value" id="repsValue">1,240</div>
+                            <div class="metric-label">Reps</div>
+                        </div>
+                        <div class="metric-card orange">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-stopwatch"></i>
+                                </div>
+                                <div class="metric-trend">
+                                    <i class="fas fa-arrow-up"></i> 8%
+                                </div>
+                            </div>
+                            <div class="metric-value" id="timeValue">45</div>
+                            <div class="metric-label">Time (min)</div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Section -->
+                    <div class="schedule-section">
+                        <div class="section-header">
+                            <h3 class="section-title">Schedule</h3>
+                            <a href="#" class="view-all">View All</a>
+                        </div>
+                        <div class="trainer-card red">
+                            <div class="trainer-avatar">MJ</div>
+                            <div class="trainer-info">
+                                <div class="trainer-name">Mike Johnson</div>
+                                <div class="trainer-specialty">10:00 AM - Strength Training</div>
+                            </div>
+                            <div class="trainer-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="trainer-card blue">
+                            <div class="trainer-avatar">SL</div>
+                            <div class="trainer-info">
+                                <div class="trainer-name">Sarah Lee</div>
+                                <div class="trainer-specialty">2:00 PM - Cardio Session</div>
+                            </div>
+                            <div class="trainer-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
